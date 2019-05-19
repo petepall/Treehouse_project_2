@@ -4,6 +4,7 @@ from copy import deepcopy
 
 from constants import PLAYERS, TEAMS
 
+MAIN_MENU_OPTIONS = [1, 2]
 
 def clear_screen():
     """clear the data on the screen
@@ -144,11 +145,14 @@ def display_stats(team_name, teams):
     teams : string
         The name of the team
     """
+    title = f"The displayed stats are for the {teams}"
+    clear_screen()
     players = []
     guardian_names = []
     exp = len([player for player in team_name if player["experience"]])
     inexp = len([player for player in team_name if not player["experience"]])
-    print(f"\nThe displayed stats are for the {teams}\n")
+    print(f"\n{title}\n")
+    print("~" * len(title))
     print(f"The team consists of : {len(team_name[0])+1} players")
     print(f"\t{exp} experienced players")
     print(f"\t{inexp} inexperienced players")
@@ -227,7 +231,7 @@ def main():
             clean_player_data(player_data))
         clear_screen()
         show_menu()
-        menu_selection = process_user_input((1, 2))
+        menu_selection = process_user_input(MAIN_MENU_OPTIONS)
         if menu_selection == 1:
             show_team_options()
         if menu_selection == 2:
