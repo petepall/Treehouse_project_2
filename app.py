@@ -63,6 +63,18 @@ def wrong_entry(message):
 
 
 def process_user_input(option_range):
+    """Process the user input where required and validate the entry
+
+    Parameters
+    ----------
+    option_range : list
+        Range of the options the user can enter
+
+    Returns
+    -------
+    int
+        returns the validate user selection back to the caller.
+    """
     try:
         menu_selection = int(input("\nEnter your option: > "))
     except (ValueError, KeyboardInterrupt):
@@ -99,39 +111,137 @@ def show_menu():
 
 
 def show_team_options():
+    """Show the teams for which the user can see statistics
+    """
     print("\nThere are statistics on the following teams:\n")
     for index, team in enumerate(TEAMS, start=1):
         print(f"{index}) {team}")
 
 
-def display_stats():
-    pass
+def average_height(team_name):
+    """Calculate the average height of the team
+
+    Parameters
+    ----------
+    team_name : list
+        Team data
+
+    Returns
+    -------
+    float
+        The average height of the selected team
+    """
+    return sum(height["height"] for height in team_name) / len(team_name[0])
 
 
-def team_balancing(clean_player_data):
-    pass
+def display_stats(team_name, teams):
+    """Display the team statistics
+
+    Parameters
+    ----------
+    team_name : list
+        The data of the selected team
+    teams : string
+        The name of the team
+    """
+    players = []
+    guardian_names = []
+    exp = len([player for player in team_name if player["experience"]])
+    inexp = len([player for player in team_name if not player["experience"]])
+    print(f"\nThe displayed stats are for the {teams}\n")
+    print(f"The team consists of : {len(team_name[0])+1} players")
+    print(f"\t{exp} experienced players")
+    print(f"\t{inexp} inexperienced players")
+    print("\nThe players on the team are:")
+    for player in team_name:
+        players.append(player['name'])
+
+    print(f"\t{', '.join(players)}")
+
+    for guardian in team_name:
+        guardian_names.append(guardian["guardians"])
+    print(f"\nThe guardians on the team are:")
+    print(f"\t{', '.join(guardian for guard_list in guardian_names for guardian in guard_list)}")
+    print(f"\nThe average height of the team is {average_height(team_name)}"
+          f" inches")
+
+    try:
+        input("\n\t\tPress ENTER to continue")
+    except KeyboardInterrupt:
+        wrong_entry("")
+
+
+def split_teams(player_list):
+    """Split the list of players into the available number of teams
+
+    Parameters
+    ----------
+    player_list : list
+        List of players that needs to be split
+
+    Returns
+    -------
+    list
+        splitted list based on the number of teams are available.
+    """
+    return [player_list[index * len(player_list) // len(TEAMS):
+                        (index + 1) * len(player_list) // len(TEAMS)]
+            for index in range(len(TEAMS))]
+
+
+def team_balancing(cleaned_player_data):
+    """Balancing the experienced and inexperienced players across the
+    available teams
+
+    Parameters
+    ----------
+    cleaned_player_data : list
+        List of the players data that needs to be split
+
+    Returns
+    -------
+    lists
+        splitted teams
+    """
+    experienced_players = [
+        player for player in cleaned_player_data if player["experience"]]
+    inexperienced_players = [
+        player for player in cleaned_player_data if not player["experience"]]
+    panthers_experience, bandits_experience, warriors_experience = split_teams(
+        [player for player in experienced_players])
+    panthers_inexperience, bandits_inexperience, warriors_inexperience = (
+        split_teams([player for player in inexperienced_players]))
+    panthers = (panthers_experience + panthers_inexperience)
+    bandits = (bandits_experience + bandits_inexperience)
+    warriors = (warriors_experience + warriors_inexperience)
+
+    return panthers, bandits, warriors
 
 
 def main():
-    player_data = deepcopy(PLAYERS)  # Create a working copy of PLAYERS
-    clean_player_data(player_data)
-    clear_screen()
-    show_menu()
-    menu_selection = process_user_input((1, 2))
-    if menu_selection == 1:
-        show_team_options()
-    if menu_selection == 2:
-        sys.exit(1)
+    """The main loop of the program
+    """
+    while True:
+        player_data = deepcopy(PLAYERS)  # Create a working copy of PLAYERS
+        panthers, bandits, warriors = team_balancing(
+            clean_player_data(player_data))
+        clear_screen()
+        show_menu()
+        menu_selection = process_user_input((1, 2))
+        if menu_selection == 1:
+            show_team_options()
+        if menu_selection == 2:
+            sys.exit(1)
 
-    team_selection = process_user_input(
-        (index for index, _ in enumerate(TEAMS, start=1)))
+        team_selection = process_user_input(
+            (index for index, _ in enumerate(TEAMS, start=1)))
 
-    if team_selection == 1:
-        print("Panthers")
-    if team_selection == 2:
-        print("Bandits")
-    if team_selection == 3:
-        print("Warriors")
+        if team_selection == 1:
+            display_stats(panthers, "Panthers")
+        if team_selection == 2:
+            display_stats(bandits, "Bandits")
+        if team_selection == 3:
+            display_stats(warriors, "Warriors")
 
 
 if __name__ == "__main__":
