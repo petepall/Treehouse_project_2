@@ -150,14 +150,17 @@ def display_stats(team_name, teams):
     clear_screen()
     players = []
     guardian_names = []
+
     exp = len([player for player in team_name if player["experience"]])
     inexp = len([player for player in team_name if not player["experience"]])
+
     print(f"\n{title}\n")
     print("~" * len(title))
     print(f"The team consists of : {len(team_name[0])+1} players")
     print(f"\t{exp} experienced players")
     print(f"\t{inexp} inexperienced players")
     print("\nThe players on the team are:")
+
     for player in team_name:
         players.append(player['name'])
 
@@ -165,6 +168,7 @@ def display_stats(team_name, teams):
 
     for guardian in team_name:
         guardian_names.append(guardian["guardians"])
+
     print(f"\nThe guardians on the team are:")
     print(f"\t{', '.join(guardian for guard_list in guardian_names for guardian in guard_list)}")
     print(f"\nThe average height of the team is {average_height(team_name)}"
@@ -210,12 +214,16 @@ def team_balancing(cleaned_player_data):
     """
     experienced_players = [
         player for player in cleaned_player_data if player["experience"]]
+
     inexperienced_players = [
         player for player in cleaned_player_data if not player["experience"]]
+
     panthers_experience, bandits_experience, warriors_experience = split_teams(
         [player for player in experienced_players])
+
     panthers_inexperience, bandits_inexperience, warriors_inexperience = (
         split_teams([player for player in inexperienced_players]))
+
     panthers = (panthers_experience + panthers_inexperience)
     bandits = (bandits_experience + bandits_inexperience)
     warriors = (warriors_experience + warriors_inexperience)
@@ -230,8 +238,10 @@ def main():
         player_data = deepcopy(PLAYERS)  # Create a working copy of PLAYERS
         panthers, bandits, warriors = team_balancing(
             clean_player_data(player_data))
+
         clear_screen()
         show_menu()
+
         menu_selection = process_user_input(MAIN_MENU_OPTIONS)
         if menu_selection == 1:
             show_team_options()
@@ -240,7 +250,6 @@ def main():
 
         team_selection = process_user_input(
             (index for index, _ in enumerate(TEAMS, start=1)))
-
         if team_selection == 1:
             display_stats(panthers, "Panthers")
         if team_selection == 2:
