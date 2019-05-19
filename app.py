@@ -6,6 +6,7 @@ from constants import PLAYERS, TEAMS
 
 MAIN_MENU_OPTIONS = [1, 2]
 
+
 def clear_screen():
     """clear the data on the screen
     """
