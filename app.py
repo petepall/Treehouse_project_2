@@ -77,14 +77,17 @@ def process_user_input(option_range):
     int
         returns the validate user selection back to the caller.
     """
+    menu_selection = None
     try:
         menu_selection = int(input("\nEnter your option: > "))
     except (ValueError, KeyboardInterrupt):
+        menu_selection = None
         wrong_entry("You made a wrong entry! Please select a valid option")
     else:
         if menu_selection in option_range:
             return menu_selection
         else:
+            menu_selection = None
             wrong_entry("You made a wrong entry! Please select a valid option")
 
 
@@ -245,17 +248,16 @@ def main():
         menu_selection = process_user_input(MAIN_MENU_OPTIONS)
         if menu_selection == 1:
             show_team_options()
+            team_selection = process_user_input(
+                (index for index, _ in enumerate(TEAMS, start=1)))
+            if team_selection == 1:
+                display_stats(panthers, "Panthers")
+            if team_selection == 2:
+                display_stats(bandits, "Bandits")
+            if team_selection == 3:
+                display_stats(warriors, "Warriors")
         if menu_selection == 2:
             sys.exit(1)
-
-        team_selection = process_user_input(
-            (index for index, _ in enumerate(TEAMS, start=1)))
-        if team_selection == 1:
-            display_stats(panthers, "Panthers")
-        if team_selection == 2:
-            display_stats(bandits, "Bandits")
-        if team_selection == 3:
-            display_stats(warriors, "Warriors")
 
 
 if __name__ == "__main__":
